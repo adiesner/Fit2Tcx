@@ -1,0 +1,31 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.68])
+AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+AC_CONFIG_SRCDIR([src/Fit2TcxConverter.cpp])
+AC_CONFIG_HEADERS([src/config.h:src/config.h.in])
+AC_CONFIG_FILES([Makefile])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+
+# Checks for libraries.
+PKG_CHECK_MODULES([TINYXML], [tinyxml])
+AC_SUBST(TINYXML_CFLAGS)
+AC_SUBST(TINYXML_LIBS)
+
+# Checks for header files.
+AC_CHECK_HEADERS([string.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_TYPE_MODE_T
+AC_TYPE_SIZE_T
+
+# Checks for library functions.
+AC_FUNC_MKTIME
+AC_CHECK_FUNCS([localtime_r memmove mkdir pow sqrt])
+
+AC_OUTPUT

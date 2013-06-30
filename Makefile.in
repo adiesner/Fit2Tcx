@@ -1,0 +1,55 @@
+# -*- mode: Makefile; -*-
+# -----------------------------------------
+# project Fit2Tcx
+
+# -----------------------------------------
+
+GCC = @CC@
+TINYXML_CFLAGS = @TINYXML_CFLAGS@
+TINYXML_LIBS = @TINYXML_LIBS@
+
+CFLAGS +=  -Wall -O2 -fPIC  -Os -DTIXML_USE_STL
+INCLUDES = $(CPPFLAGS) $(TINYXML_CFLAGS) 
+LDFLAGS +=  -s  $(CREATE_LIB) $(CREATE_DEF)
+LDLIBS = $(T_LDLIBS) $(TINYXML_LIBS) -lstdc++
+
+LINK_dll = $(GCC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
+LINK_lib = rm -f $@ && ar rcs $@ $^
+COMPILE_cpp = $(GCC) $(CFLAGS) -o $@ -c $< $(MAKEDEP) $(INCLUDES)
+
+%.o : %.cpp ; $(COMPILE_cpp)
+.SUFFIXES: .o .d .cpp
+
+all: all.before all.targets all.after
+
+all.before :
+	-
+all.after : $(FIRST_TARGET)
+	
+all.targets : Release_target 
+
+clean :
+	rm -fv $(clean.OBJ)
+	rm -fv $(DEP_FILES)
+
+.PHONY: all clean distclean
+
+# -----------------------------------------
+# Release_target
+
+Release_target.BIN = fit2tcx
+Release_target.OBJ = src/Fit2TcxConverter.o src/TcxBuilder/TcxBase.o src/TcxBuilder/TcxTrackpoint.o src/TcxBuilder/TcxTrack.o src/TcxBuilder/TcxActivities.o src/TcxBuilder/TcxAuthor.o src/TcxBuilder/TcxActivity.o src/TcxBuilder/TcxCreator.o src/TcxBuilder/TcxLap.o src/fit/fitReader.o src/main.o
+DEP_FILES += src/Fit2TcxConverter.d src/TcxBuilder/TcxBase.d src/TcxBuilder/TcxTrackpoint.d src/TcxBuilder/TcxTrack.d src/TcxBuilder/TcxActivities.d src/TcxBuilder/TcxAuthor.d src/TcxBuilder/TcxActivity.d src/TcxBuilder/TcxCreator.d src/TcxBuilder/TcxLap.d src/fit/fitReader.d src/main.d
+clean.OBJ += $(Release_target.BIN) $(Release_target.OBJ)
+
+Release_target : Release_target.before $(Release_target.BIN) Release_target.after_always
+
+Release_target.before :
+	
+	
+Release_target.after_always : $(Release_target.BIN)
+	
+$(Release_target.BIN) : $(Release_target.OBJ)
+	$(LINK_dll)
+	
+
