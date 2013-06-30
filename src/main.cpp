@@ -153,9 +153,13 @@ int main(int argc, char* argv[])
         	std::cout << "Not a fit file: " << inputFile << std::endl;
             errorExit = true;
         }
-    } catch (FitFileException &e) {
-    	std::cout << "Exception: " << e.getError() << std::endl;
+    } catch (FitFileException *e) {
+    	std::cout << "Exception: " << e->getError() << std::endl;
+    	delete(e);
         errorExit = true;
+    } catch (...) {
+    	std::cout << "Unknown exception happened!" << std::endl;
+    	errorExit=true;
     }
     delete (fit);
 
