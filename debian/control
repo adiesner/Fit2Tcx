@@ -1,0 +1,14 @@
+Source: fit2tcx
+Section: misc
+Priority: optional
+Maintainer: Andreas Diesner <garminplugin@andreas-diesner.de>
+Build-Depends: debhelper (>= 7), libgcc1, libc6, pkg-config, libc6, libtinyxml-dev
+Standards-Version: 3.8.1
+Homepage: http://www.andreas-diesner.de/garminplugin
+
+Package: fit2tcx
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Fit2Tcx - Convert Garmin FIT files to tcx
+ Command line utility to convert Garmin fit files to tcx
+
