@@ -78,8 +78,6 @@
 #ifndef FITMSG_FILE_ID_H
 #define FITMSG_FILE_ID_H
 
-#include <sstream>
-
 class FitMsg_File_ID : public FitMsg
 {
 public:

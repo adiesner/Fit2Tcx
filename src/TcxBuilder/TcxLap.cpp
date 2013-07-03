@@ -286,7 +286,6 @@ void TcxLap::calculateMaximumHeartRateBpm() {
     {
         TcxTrack* track = *it;
         int currentMaxHeartRate = track->getMaxHeartRate();
-        cout << "*** Max Heart Rate: " << currentMaxHeartRate << endl;
         maxHeartRate = (currentMaxHeartRate > maxHeartRate) ? currentMaxHeartRate : maxHeartRate;
     }
     if (maxHeartRate > 0) {
