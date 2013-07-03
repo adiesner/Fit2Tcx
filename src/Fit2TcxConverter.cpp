@@ -352,10 +352,16 @@ void Fit2TcxConverter::handle_File_ID(FitMsg_File_ID *fileid) {
 	 */
 }
 
-string Fit2TcxConverter::getTcxContent() {
+TiXmlDocument * Fit2TcxConverter::getTiXmlDocument(bool readTrackData, string fitnessDetailId) {
+	tcxAuthor->setName("Fit2Tcx");
+	TiXmlDocument * output = this->tcxBase->getTcxDocument(readTrackData, fitnessDetailId);
+	return output;
+}
+
+string Fit2TcxConverter::getTcxContent(bool readTrackData, string fitnessDetailId) {
 	tcxAuthor->setName("Fit2Tcx");
 
-	TiXmlDocument * output = this->tcxBase->getTcxDocument(true, "");
+	TiXmlDocument * output = this->tcxBase->getTcxDocument(readTrackData, fitnessDetailId);
     TiXmlPrinter printer;
     printer.SetIndent( "  " );
     output->Accept( &printer );

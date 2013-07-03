@@ -59,7 +59,12 @@ void printUsage(string error, bool extended) {
 
 int main(int argc, char* argv[])
 {
-    bool doPrintHelp=false;
+	/*
+	 * Make sure that numbers are outputted 1234.56 and not 1.234,56
+	 */
+	setlocale(LC_ALL, "POSIX");
+
+	bool doPrintHelp=false;
     bool doPrintHelpExtended=false;
     string inputFile="";
     string outputFile="";
@@ -158,7 +163,7 @@ int main(int argc, char* argv[])
     	delete(e);
         errorExit = true;
     } catch (...) {
-    	std::cout << "Unknown exception happened!" << std::endl;
+    	std::cout << "Unknown exception happened while parsing fit file!" << std::endl;
     	errorExit=true;
     }
     delete (fit);
@@ -167,7 +172,7 @@ int main(int argc, char* argv[])
     	return 1;
     }
 
-    string xml = conv->getTcxContent();
+    string xml = conv->getTcxContent(true, "");
     if (!outputFile.empty()) {
 		std::ofstream workoutFile;
 		workoutFile.open(outputFile.c_str());

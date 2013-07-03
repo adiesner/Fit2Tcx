@@ -49,7 +49,9 @@ public:
      */
     virtual void fitDebugMsg(string msg);
 
-    string getTcxContent();
+    string getTcxContent(bool readTrackData, string fitnessDetailId);
+
+    TiXmlDocument * getTiXmlDocument(bool readTrackData, string fitnessDetailId);
 
 private:
 
