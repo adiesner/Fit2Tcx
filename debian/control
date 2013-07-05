@@ -9,6 +9,6 @@ Homepage: http://www.andreas-diesner.de/garminplugin
 Package: fit2tcx
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Fit2Tcx - Convert Garmin FIT files to tcx
+Description: Convert Garmin FIT files to TCX
  Command line utility to convert Garmin fit files to tcx
 
