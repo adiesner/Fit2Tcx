@@ -30,7 +30,7 @@
 
 using namespace std;
 
-const string version = "0.1";
+const string version = "0.2";
 
 void printUsage(string error, bool extended) {
 	if (error.length() > 0) {
@@ -47,7 +47,9 @@ void printUsage(string error, bool extended) {
 		std::cout <<  "Output is either a file or stdout." << std::endl;
 		std::cout <<  std::endl;
 	}
-
+	std::cout << "Usage: fit2tcx --convert <INPUTFILE> <INPUTFILE2> <INPUTFILE3> ..." << std::endl;
+	std::cout << "\t--convert <FILES> - convert multiple fit files. Output is <FILENAME>.tcx" << std::endl;
+	std::cout << std::endl;
 	std::cout << "Usage: fit2tcx -i <INPUTFILE> [-o <OUTPUTFILE>]" << std::endl;
 	std::cout << "\t-i <INPUTFILE> - fit file to convert" << std::endl;
 	std::cout << "\t-o <OUTPUTFILE> - tcx file to write (if not specified, stdout will be used)" << std::endl;
@@ -66,7 +68,8 @@ int main(int argc, char* argv[])
 
 	bool doPrintHelp=false;
     bool doPrintHelpExtended=false;
-    string inputFile="";
+    bool doMultipleConversions=false;
+    vector<string> inputFiles;
     string outputFile="";
     int c;
     while (1) {
@@ -77,12 +80,13 @@ int main(int argc, char* argv[])
             {"version", no_argument, 0, 'v'},
             {"input",  required_argument, 0, 'i'},
             {"output", required_argument, 0, 'o'},
+            {"convert", no_argument, 0, 'c'},
             {0, 0, 0, 0}
           };
         /* getopt_long stores the option index here. */
         int option_index = 0;
 
-        c = getopt_long (argc, argv, "hi:o:",
+        c = getopt_long (argc, argv, "hi:o:c:",
                          long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -111,7 +115,11 @@ int main(int argc, char* argv[])
           break;
 
           case 'i':// Input file
-        	  inputFile = optarg;
+        	  inputFiles.push_back(optarg);
+          break;
+
+          case 'c':// Input file list
+        	  doMultipleConversions = true;
           break;
 
           case 'o': // Output file
@@ -129,63 +137,86 @@ int main(int argc, char* argv[])
           }
       }
 
+    if (doMultipleConversions) {
+        for (int i = optind; i < argc; i++) {
+        	inputFiles.push_back(argv[i]);
+        }
+    }
+
 	if (doPrintHelp) {
 	     printUsage("", doPrintHelpExtended);
 	     return 0;
 	}
 
-	if (inputFile.empty()) {
+	if (inputFiles.empty()) {
 	     printUsage("Input file missing", false);
 	     return 1;
 	}
 
 	bool errorExit = false;
 
-    Fit2TcxConverter *conv = new Fit2TcxConverter();
+	for(unsigned int t=0;t<inputFiles.size();++t){
+		string inputFile = inputFiles.at(t);
+	    Fit2TcxConverter *conv = new Fit2TcxConverter();
 
-    FitReader *fit = new FitReader(inputFile);
-    //fit->setDebugOutput(true);
-    fit->registerFitMsgFkt(conv);
-    try {
-        if (fit->isFitFile()) {
-            int i = 0;
-            while (fit->readNextRecord())  {
-                i++;
-            }
+	    if (doMultipleConversions) {
+	    	outputFile = inputFile;
+	    	unsigned found = outputFile.find_last_of(".");
+	    	if (found != string::npos) {
+	    		outputFile = outputFile.substr(0,found) + ".tcx";
+	    	} else {
+	    		outputFile += ".tcx";
+	    	}
+	    }
 
-            fit->closeFitFile();
-        } else {
-        	std::cout << "Not a fit file: " << inputFile << std::endl;
-            errorExit = true;
-        }
-    } catch (FitFileException *e) {
-    	std::cout << "Exception: " << e->getError() << std::endl;
-    	delete(e);
-        errorExit = true;
-    } catch (...) {
-    	std::cout << "Unknown exception happened while parsing fit file!" << std::endl;
-    	errorExit=true;
-    }
-    delete (fit);
+	    FitReader *fit = new FitReader(inputFile);
+	    fit->registerFitMsgFkt(conv);
+	    try {
+	        if (fit->isFitFile()) {
+	            int i = 0;
+	            while (fit->readNextRecord())  {
+	                i++;
+	            }
 
-    if (errorExit) {
-    	return 1;
-    }
+	            fit->closeFitFile();
+	        } else {
+	        	std::cout << "Not a fit file: " << inputFile << std::endl;
+	            errorExit = true;
+	        }
+	    } catch (FitFileException *e) {
+	    	std::cout << "Exception: " << e->getError() << std::endl;
+	    	delete(e);
+	        errorExit = true;
+	    } catch (...) {
+	    	std::cout << "Unknown exception happened while parsing fit file!" << std::endl;
+	    	errorExit=true;
+	    }
+	    delete (fit);
+	    fit = NULL;
 
-    string xml = conv->getTcxContent(true, "");
-    if (!outputFile.empty()) {
-		std::ofstream workoutFile;
-		workoutFile.open(outputFile.c_str());
-		if (workoutFile.is_open()) {
-			workoutFile << xml;
-			workoutFile.close();
-			std::cout << "Saved to " << outputFile << std::endl;
-		} else {
-			std::cout << "Unable to open " << outputFile << std::endl;
-		}
-    } else {
-    	std::cout << xml << std::endl;
-    }
+	    if (errorExit) {
+		    delete(conv);
+	    	return 1;
+	    }
+
+	    string xml = conv->getTcxContent(true, "");
+	    if (!outputFile.empty()) {
+			std::ofstream workoutFile;
+			workoutFile.open(outputFile.c_str());
+			if (workoutFile.is_open()) {
+				workoutFile << xml;
+				workoutFile.close();
+				std::cout << "Saved to " << outputFile << std::endl;
+			} else {
+				std::cout << "Unable to open " << outputFile << std::endl;
+			}
+	    } else {
+	    	std::cout << xml << std::endl;
+	    }
+
+	    delete(conv);
+	    conv = NULL;
+	}
 
     return 0;
 }
