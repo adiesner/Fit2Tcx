@@ -141,6 +141,15 @@ int main(int argc, char* argv[])
         for (int i = optind; i < argc; i++) {
         	inputFiles.push_back(argv[i]);
         }
+    } else {
+    	if (optind < argc) {
+    		string unknownParams = "";
+            for (int i = optind; i < argc; i++) {
+            	unknownParams += string(argv[i]) + " ";
+            }
+            printUsage("Unknown parameter: "+unknownParams, false);
+            return 1;
+    	}
     }
 
 	if (doPrintHelp) {
@@ -158,6 +167,7 @@ int main(int argc, char* argv[])
 	for(unsigned int t=0;t<inputFiles.size();++t){
 		string inputFile = inputFiles.at(t);
 	    Fit2TcxConverter *conv = new Fit2TcxConverter();
+	    bool convertError = false;
 
 	    if (doMultipleConversions) {
 	    	outputFile = inputFile;
@@ -181,42 +191,47 @@ int main(int argc, char* argv[])
 	            fit->closeFitFile();
 	        } else {
 	        	std::cout << "Not a fit file: " << inputFile << std::endl;
-	            errorExit = true;
+	        	convertError = true;
 	        }
-	    } catch (FitFileException *e) {
-	    	std::cout << "Exception: " << e->getError() << std::endl;
-	    	delete(e);
-	        errorExit = true;
+	    } catch (FitFileException &e) {
+	    	std::cout << "Exception: " << e.getError() << " (" << inputFile << ")" << std::endl;
+	    	convertError = true;
 	    } catch (...) {
-	    	std::cout << "Unknown exception happened while parsing fit file!" << std::endl;
-	    	errorExit=true;
+	    	std::cout << "Unknown exception happened while parsing fit file! (" << inputFile << ")" << std::endl;
+	    	convertError=true;
 	    }
 	    delete (fit);
 	    fit = NULL;
 
-	    if (errorExit) {
+	    if (convertError) {
+	    	errorExit = true;
 		    delete(conv);
-	    	return 1;
+		    conv = NULL;
 	    }
 
-	    string xml = conv->getTcxContent(true, "");
-	    if (!outputFile.empty()) {
-			std::ofstream workoutFile;
-			workoutFile.open(outputFile.c_str());
-			if (workoutFile.is_open()) {
-				workoutFile << xml;
-				workoutFile.close();
-				std::cout << "Saved to " << outputFile << std::endl;
+	    if (conv != NULL) {
+			string xml = conv->getTcxContent(true, "");
+			if (!outputFile.empty()) {
+				std::ofstream workoutFile;
+				workoutFile.open(outputFile.c_str());
+				if (workoutFile.is_open()) {
+					workoutFile << xml;
+					workoutFile.close();
+					std::cout << "Saved to " << outputFile << std::endl;
+				} else {
+					std::cout << "Unable to open " << outputFile << " for writing."<< std::endl;
+				}
 			} else {
-				std::cout << "Unable to open " << outputFile << std::endl;
+				std::cout << xml << std::endl;
 			}
-	    } else {
-	    	std::cout << xml << std::endl;
-	    }
 
-	    delete(conv);
-	    conv = NULL;
+			delete(conv);
+			conv = NULL;
+	    }
 	}
 
+    if (errorExit) {
+    	return 1;
+    }
     return 0;
 }
