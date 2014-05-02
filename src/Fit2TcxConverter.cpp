@@ -151,6 +151,12 @@ void Fit2TcxConverter::handle_Record(FitMsg_Record *record) {
 	ss << record->getSpeed();
 	point->setSpeed(ss.str());
 
+	if(((int)record->getPower()) > 0){
+		ss.str("");
+		ss << record->getPower();
+		point->setPower(ss.str());
+	}
+
 	/*
 	 * There is no place for these in a tcx file
 	record->getAccumulatedPower();
@@ -207,6 +213,12 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 		this->tcxLap->setAvgSpeed(ss.str());
 	}
 
+	if (lap->getAvgPower() > 0) {
+		ss.str("");
+		ss << lap->getAvgPower();
+		this->tcxLap->setAvgPower(ss.str());
+	}
+
 	if (((int)lap->getMaxHeartRate() > 0) && ((int)lap->getMaxHeartRate() < 255)) {
 		ss.str("");
 		ss << (int)lap->getMaxHeartRate();
@@ -217,6 +229,13 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 		ss.str("");
 		ss << lap->getMaxSpeed();
 		this->tcxLap->setMaximumSpeed(ss.str());
+	}
+
+
+	if (lap->getMaxPower() > 0) {
+		ss.str("");
+		ss << lap->getMaxPower();
+		this->tcxLap->setMaxPower(ss.str());
 	}
 
 	if (lap->getTotalCalories() > 0) {

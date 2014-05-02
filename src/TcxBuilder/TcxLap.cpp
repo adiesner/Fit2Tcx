@@ -34,6 +34,8 @@ TcxLap::TcxLap() {
     this->cadenceSensorType = TrainingCenterDatabase::UndefinedCadenceType;
     this->maxCadence="";
     this->avgSpeed="";
+    this->avgPower="";
+    this->maxPower="";
     this->startTime="1970-01-01T00:00:00Z";
 }
 
@@ -75,6 +77,12 @@ TiXmlElement * TcxLap::getTiXml(bool readTrackData) {
         xmlMaxSpeed->LinkEndChild(new TiXmlText(this->maximumSpeed));
         xmlLap->LinkEndChild(xmlMaxSpeed);
     }
+
+    if (this->maxPower.length() > 0) {
+        TiXmlElement * xmlMaxPower = new TiXmlElement("MaxWatts");
+        xmlMaxPower->LinkEndChild(new TiXmlText(this->maxPower));
+        xmlLap->LinkEndChild(xmlMaxPower);
+    }    
 
     if (this->calories.length() == 0) {
         calculateCalories();
@@ -190,6 +198,21 @@ TiXmlElement * TcxLap::getTiXml(bool readTrackData) {
         xmlLX->LinkEndChild(xmlAvgSpeed);
     }
 
+    if (this->avgPower.length() > 0) {
+        if (xmlLapExtensions == NULL) {
+            xmlLapExtensions = new TiXmlElement("Extensions");
+            xmlLap->LinkEndChild(xmlLapExtensions);
+        }
+
+        TiXmlElement * xmlLX = new TiXmlElement("LX");
+        xmlLX->SetAttribute("xmlns","http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+        xmlLapExtensions->LinkEndChild(xmlLX);
+
+        TiXmlElement * xmlAvgPower = new TiXmlElement("AvgWatts");
+        xmlAvgPower->LinkEndChild(new TiXmlText(this->avgPower));
+        xmlLX->LinkEndChild(xmlAvgPower);
+    }
+
     if (this->steps.length() > 0) {
         if (xmlLapExtensions == NULL) {
             xmlLapExtensions = new TiXmlElement("Extensions");
@@ -234,6 +257,9 @@ void TcxLap::setDistanceMeters(string distance) {
 void TcxLap::setMaximumSpeed(string speed) {
     this->maximumSpeed=speed;
 }
+void TcxLap::setMaxPower(string power){
+    this->maxPower=power;
+}
 void TcxLap::setCalories(string calories) {
     this->calories = calories;
 }
@@ -255,9 +281,11 @@ void TcxLap::setTriggerMethod(TrainingCenterDatabase::TriggerMethod_t method) {
 void TcxLap::setNotes(string note) {
     this->notes = note;
 }
-
 void TcxLap::setAvgSpeed(string speed) {
 	this->avgSpeed = speed;
+}
+void TcxLap::setAvgPower(string power){
+    this->avgPower=power;
 }
 void TcxLap::setMaxCadence(string cadence) {
 	this->maxCadence = cadence;
