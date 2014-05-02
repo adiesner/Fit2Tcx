@@ -157,7 +157,7 @@ TiXmlElement * TcxLap::getTiXml(bool readTrackData) {
         }
     }
 
-    if (this->maxCadence.length() > 0) {
+    if ((this->maxCadence.length() > 0) && (this->maxCadence != "255")) {
         if (xmlLapExtensions == NULL) {
             xmlLapExtensions = new TiXmlElement("Extensions");
             xmlLap->LinkEndChild(xmlLapExtensions);

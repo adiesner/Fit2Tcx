@@ -36,8 +36,9 @@ enum FIT_SPORT {
 	SPORT_INVALID=0xFF,
 };
 
-#define FIT_ENUM_INVALID            										     (0xFF)
-#define FIT_POSITION_INVALID            									     ((signed long)0x7FFFFFFF)
+#define FIT_ENUM_INVALID                                                        (0xFF)
+#define FIT_POSITION_INVALID                                                    ((signed long)0x7FFFFFFF)
+#define FIT_CYCLES_INVALID                                                      ((unsigned long)0xFFFFFFFF)
 
 enum FIT_LAP_INTENSITY {
 	INTENSITY_ACTIVE=0,

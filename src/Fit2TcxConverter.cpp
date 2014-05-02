@@ -267,7 +267,7 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 			this->tcxLap->setCadenceSensorType(TrainingCenterDatabase::Footpod);
 			setTrackpointCadenceType(TrainingCenterDatabase::Footpod);
 
-		    if (lap->getTotalCycles() > 0) {
+		    if ((lap->getTotalCycles() > 0) && (lap->getTotalCycles() != FIT_CYCLES_INVALID)) {
 		        ss.str("");
 		        ss << (lap->getTotalCycles() * 2);
 		        this->tcxLap->setSteps(ss.str());
