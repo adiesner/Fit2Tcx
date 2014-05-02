@@ -113,13 +113,22 @@ void Fit2TcxConverter::handle_Record(FitMsg_Record *record) {
 
     TcxTrackpoint * point;
     if ((record->getPositionLat() != FIT_POSITION_INVALID) && (record->getPositionLong() != FIT_POSITION_INVALID)) {
-        stringstream lat;
-        lat.precision(10); // default 4 decimal chars which is not enough
-        stringstream lon;
-        lon.precision(10); // default 4 decimal chars which is not enough
-        lat << SEMI2DEG(record->getPositionLat());
-        lon << SEMI2DEG(record->getPositionLong());
-        point = new TcxTrackpoint(timeId, lat.str(), lon.str());
+        double dlat = SEMI2DEG(record->getPositionLat());
+        double dlon = SEMI2DEG(record->getPositionLong());
+
+        if ((dlat >=-90) && (dlat <=90) && // sanity check
+            (dlon >=-180) && (dlon <=180) && // + it is very unlikely that you are actually driving through 0/0
+            (((dlat != 0) && (dlon != 0)))) {
+            stringstream lat;
+            lat.precision(10); // default 4 decimal chars which is not enough
+            stringstream lon;
+            lon.precision(10); // default 4 decimal chars which is not enough
+            lat << dlat;
+            lon << dlon;
+            point = new TcxTrackpoint(timeId, lat.str(), lon.str());
+        } else {
+            point = new TcxTrackpoint(timeId);
+        }
     } else {
         point = new TcxTrackpoint(timeId);
     }
@@ -207,7 +216,7 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 		this->tcxLap->setMaxCadence(ss.str());
 	}
 
-	if (lap->getAvgSpeed() > 0) {
+	if ((lap->getAvgSpeed() > 0) && (lap->getAvgSpeed() != FIT_SPEED_INVALID)) {
 		ss.str("");
 		ss << lap->getAvgSpeed();
 		this->tcxLap->setAvgSpeed(ss.str());
