@@ -78,12 +78,6 @@ TiXmlElement * TcxLap::getTiXml(bool readTrackData) {
         xmlLap->LinkEndChild(xmlMaxSpeed);
     }
 
-    if (this->maxPower.length() > 0) {
-        TiXmlElement * xmlMaxPower = new TiXmlElement("MaxWatts");
-        xmlMaxPower->LinkEndChild(new TiXmlText(this->maxPower));
-        xmlLap->LinkEndChild(xmlMaxPower);
-    }    
-
     if (this->calories.length() == 0) {
         calculateCalories();
     }
@@ -198,7 +192,7 @@ TiXmlElement * TcxLap::getTiXml(bool readTrackData) {
         xmlLX->LinkEndChild(xmlAvgSpeed);
     }
 
-    if (this->avgPower.length() > 0) {
+    if ((this->avgPower.length() > 0) && (this->avgPower != "65535")) {
         if (xmlLapExtensions == NULL) {
             xmlLapExtensions = new TiXmlElement("Extensions");
             xmlLap->LinkEndChild(xmlLapExtensions);
@@ -211,6 +205,21 @@ TiXmlElement * TcxLap::getTiXml(bool readTrackData) {
         TiXmlElement * xmlAvgPower = new TiXmlElement("AvgWatts");
         xmlAvgPower->LinkEndChild(new TiXmlText(this->avgPower));
         xmlLX->LinkEndChild(xmlAvgPower);
+    }
+
+    if ((this->maxPower.length() > 0) && (this->maxPower != "65535")) {
+        if (xmlLapExtensions == NULL) {
+            xmlLapExtensions = new TiXmlElement("Extensions");
+            xmlLap->LinkEndChild(xmlLapExtensions);
+        }
+
+        TiXmlElement * xmlLX = new TiXmlElement("LX");
+        xmlLX->SetAttribute("xmlns","http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+        xmlLapExtensions->LinkEndChild(xmlLX);
+
+        TiXmlElement * xmlMaxPower = new TiXmlElement("MaxWatts");
+        xmlMaxPower->LinkEndChild(new TiXmlText(this->maxPower));
+        xmlLX->LinkEndChild(xmlMaxPower);
     }
 
     if (this->steps.length() > 0) {
