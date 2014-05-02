@@ -192,7 +192,7 @@ TiXmlElement * TcxTrackpoint::getTiXml() {
             xmlTrackPoint->LinkEndChild(xmlTrackPointExtensions);
         }
 
-		xmlExtensionTPX = new TiXmlElement("TPX");
+        xmlExtensionTPX = new TiXmlElement("TPX");
 		xmlExtensionTPX->SetAttribute("xmlns","http://www.garmin.com/xmlschemas/ActivityExtension/v2");
 		xmlTrackPointExtensions->LinkEndChild(xmlExtensionTPX);
 
@@ -201,7 +201,7 @@ TiXmlElement * TcxTrackpoint::getTiXml() {
         xmlExtensionTPX->LinkEndChild(xmlSpeed);
     }
 
-    if(this->power.length() > 0){
+    if ((this->power.length() > 0) && (this->power != "65535")) {
         if (xmlTrackPointExtensions == NULL) {
             xmlTrackPointExtensions = new TiXmlElement("Extensions");
             xmlTrackPoint->LinkEndChild(xmlTrackPointExtensions);
