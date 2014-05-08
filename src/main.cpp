@@ -30,7 +30,7 @@
 
 using namespace std;
 
-const string version = "0.3";
+const string version = "0.4";
 
 void printUsage(string error, bool extended) {
 	if (error.length() > 0) {
