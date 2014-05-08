@@ -144,7 +144,7 @@ void Fit2TcxConverter::handle_Record(FitMsg_Record *record) {
     ss << record->getDistance();
     point->setDistanceMeters(ss.str());
 
-    if (((int)record->getHeartRate()) > 0) {
+    if ((((int)record->getHeartRate()) > 0) && (((int)record->getHeartRate()) != FIT_HEARTRATE_INVALID))  {
         ss.str("");
         ss << (int)record->getHeartRate();
         point->setHeartRateBpm(ss.str());
@@ -198,19 +198,19 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 		this->tcxLap->setDistanceMeters(ss.str());
 	}
 
-	if ((((int)lap->getAvgHeartRate()) > 0) && (((int)lap->getAvgHeartRate()) != 255)) {
+	if ((((int)lap->getAvgHeartRate()) > 0) && (((int)lap->getAvgHeartRate()) != FIT_HEARTRATE_INVALID)) {
 		ss.str("");
 		ss << (int)lap->getAvgHeartRate();
 		this->tcxLap->setAverageHeartRateBpm(ss.str());
 	}
 
-	if (((int)lap->getAvgCadence()) > 0) {
+	if ((((int)lap->getAvgCadence()) > 0) && (((int)lap->getAvgCadence()) != FIT_CADENCE_INVALID)) {
 		ss.str("");
 		ss << (int)lap->getAvgCadence();
 		this->tcxLap->setCadence(ss.str());
 	}
 
-	if (((int)lap->getMaxCadence()) > 0) {
+	if ((((int)lap->getMaxCadence()) > 0) && (((int)lap->getMaxCadence()) != FIT_CADENCE_INVALID)) {
 		ss.str("");
 		ss << (int)lap->getMaxCadence();
 		this->tcxLap->setMaxCadence(ss.str());
@@ -222,26 +222,26 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 		this->tcxLap->setAvgSpeed(ss.str());
 	}
 
-	if (lap->getAvgPower() > 0) {
+	if ((lap->getAvgPower() > 0) && (lap->getAvgPower() != FIT_POWER_INVALID)) {
 		ss.str("");
 		ss << lap->getAvgPower();
 		this->tcxLap->setAvgPower(ss.str());
 	}
 
-	if (((int)lap->getMaxHeartRate() > 0) && ((int)lap->getMaxHeartRate() < 255)) {
+	if (((int)lap->getMaxHeartRate() > 0) && ((int)lap->getMaxHeartRate() < FIT_HEARTRATE_INVALID)) {
 		ss.str("");
 		ss << (int)lap->getMaxHeartRate();
 		this->tcxLap->setMaximumHeartRateBpm(ss.str());
 	}
 
-	if (lap->getMaxSpeed() > 0) {
+	if ((lap->getMaxSpeed() > 0) && (lap->getMaxSpeed() != FIT_SPEED_INVALID)) {
 		ss.str("");
 		ss << lap->getMaxSpeed();
 		this->tcxLap->setMaximumSpeed(ss.str());
 	}
 
 
-	if (lap->getMaxPower() > 0) {
+	if ((lap->getMaxPower() > 0) && (lap->getAvgPower() != FIT_POWER_INVALID)) {
 		ss.str("");
 		ss << lap->getMaxPower();
 		this->tcxLap->setMaxPower(ss.str());
