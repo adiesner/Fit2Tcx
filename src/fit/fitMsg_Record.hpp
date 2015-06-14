@@ -21,6 +21,8 @@
 #ifndef FITMSG_RECORD_H
 #define FITMSG_RECORD_H
 
+#include "fitDefines.hpp"
+
 #define FIT_MESSAGE_RECORD                                      ((unsigned char)20)
 
 class FitMsg_Record : public FitMsg
@@ -28,15 +30,15 @@ class FitMsg_Record : public FitMsg
 public:
 	FitMsg_Record() : FitMsg(FIT_MESSAGE_RECORD),
 	    //TODO: Check if other default values are better
-                timestamp(0),
-                positionLat(0),
-                positionLong(0),
-                altitude(0),
-                heartRate(0),
-                cadence(0),
-                distance(0),
-                speed(0),
-                power(0),
+                timestamp(FIT_DATE_TIME_INVALID),
+                positionLat(FIT_POSITION_INVALID),
+                positionLong(FIT_POSITION_INVALID),
+                altitude(FIT_ALTITUDE_INVALID),
+                heartRate(FIT_HEARTRATE_INVALID),
+                cadence(FIT_CADENCE_INVALID),
+                distance(FIT_DISTANCE_INVALID),
+                speed(FIT_SPEED_INVALID),
+                power(FIT_POWER_INVALID),
                 numCompressedSpeedDistance(0),
                 grade(0),
                 resistance(0),

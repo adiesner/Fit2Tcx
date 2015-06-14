@@ -27,9 +27,9 @@
 
 
 Fit2TcxConverter::Fit2TcxConverter() : 	tcxBase(NULL),
- 	 	 	 	 	 	 	 	 	 	 tcxActivities(NULL),
+ 	 	 	 	 	 	 	 	 	 	tcxActivities(NULL),
  										tcxActivity(NULL),
- 	 	 	 	 	 	 	 	 	 	 tcxAuthor(NULL),
+ 	 	 	 	 	 	 	 	 	 	tcxAuthor(NULL),
 										tcxLap(NULL),
 										tcxTrack(NULL),
 										tcxCreator(NULL)
@@ -104,6 +104,11 @@ void Fit2TcxConverter::handle_Activity(FitMsg_Activity *activity) {
 
 void Fit2TcxConverter::handle_Record(FitMsg_Record *record) {
 
+	if (record->getTimestamp() == FIT_DATE_TIME_INVALID) {
+		// invalid timestamp? skip this record
+		return;
+	}
+
 	// Create new lap if needed
 	if (tcxLap == NULL) {
 		trackpointList.clear();
@@ -141,30 +146,36 @@ void Fit2TcxConverter::handle_Record(FitMsg_Record *record) {
 	trackpointList.push_back(point);
 
     stringstream ss;
-    ss << record->getAltitude();
-    point->setAltitudeMeters(ss.str());
+    if ((float)record->getAltitude() != FIT_ALTITUDE_INVALID) {
+		ss << record->getAltitude();
+		point->setAltitudeMeters(ss.str());
+	}
 
-    ss.str("");
-    ss << record->getDistance();
-    point->setDistanceMeters(ss.str());
+    if ((float)record->getDistance() != FIT_DISTANCE_INVALID) {
+		ss.str("");
+		ss << record->getDistance();
+		point->setDistanceMeters(ss.str());
+	}
 
-    if ((((int)record->getHeartRate()) > 0) && (((int)record->getHeartRate()) != FIT_HEARTRATE_INVALID))  {
+    if (((int)record->getHeartRate()) != FIT_HEARTRATE_INVALID) {
         ss.str("");
         ss << (int)record->getHeartRate();
         point->setHeartRateBpm(ss.str());
     }
 
-	if (((int)record->getCadence()) > 0) {
+	if (((int)record->getCadence()) != FIT_CADENCE_INVALID) {
 		ss.str("");
 		ss << (int)record->getCadence();
 		point->setCadence(ss.str());
 	}
 
-	ss.str("");
-	ss << record->getSpeed();
-	point->setSpeed(ss.str());
+	if ((float)record->getSpeed() != FIT_SPEED_INVALID) {
+		ss.str("");
+		ss << record->getSpeed();
+		point->setSpeed(ss.str());
+	}
 
-	if(((int)record->getPower()) > 0){
+	if ((unsigned short)record->getPower() > 0 && ((unsigned short)record->getPower() != FIT_POWER_INVALID)) {
 		ss.str("");
 		ss << record->getPower();
 		point->setPower(ss.str());
@@ -197,69 +208,70 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 
 	// 999km is a randomly choosen maximum, because I observed values like (1.84467e+17)
 	// If DistanceMeters is not set, the tcxLap will calculate it itself before output
-	if ((lap->getTotalDistance() >0) && (lap->getTotalDistance() < 999000)) {
+	if ((lap->getTotalDistance() >0) && (lap->getTotalDistance() < 999000) && (lap->getTotalDistance() != FIT_DISTANCE_INVALID)) {
 		ss << lap->getTotalDistance();
 		this->tcxLap->setDistanceMeters(ss.str());
 	}
 
-	if ((((int)lap->getAvgHeartRate()) > 0) && (((int)lap->getAvgHeartRate()) != FIT_HEARTRATE_INVALID)) {
+	if ((int)lap->getAvgHeartRate() != FIT_HEARTRATE_INVALID) {
 		ss.str("");
 		ss << (int)lap->getAvgHeartRate();
 		this->tcxLap->setAverageHeartRateBpm(ss.str());
 	}
 
-	if ((((int)lap->getAvgCadence()) > 0) && (((int)lap->getAvgCadence()) != FIT_CADENCE_INVALID)) {
+	if (((int)lap->getAvgCadence()) != FIT_CADENCE_INVALID) {
 		ss.str("");
 		ss << (int)lap->getAvgCadence();
 		this->tcxLap->setCadence(ss.str());
 	}
 
-	if ((((int)lap->getMaxCadence()) > 0) && (((int)lap->getMaxCadence()) != FIT_CADENCE_INVALID)) {
+	if (((int)lap->getMaxCadence()) != FIT_CADENCE_INVALID) {
 		ss.str("");
 		ss << (int)lap->getMaxCadence();
 		this->tcxLap->setMaxCadence(ss.str());
 	}
 
-	if ((lap->getAvgSpeed() > 0) && (lap->getAvgSpeed() != FIT_SPEED_INVALID)) {
+	if (lap->getAvgSpeed() != FIT_SPEED_INVALID) {
 		ss.str("");
 		ss << lap->getAvgSpeed();
 		this->tcxLap->setAvgSpeed(ss.str());
 	}
 
-	if ((lap->getAvgPower() > 0) && (lap->getAvgPower() != FIT_POWER_INVALID)) {
+	if (lap->getAvgPower() != FIT_POWER_INVALID) {
 		ss.str("");
 		ss << lap->getAvgPower();
 		this->tcxLap->setAvgPower(ss.str());
 	}
 
-	if (((int)lap->getMaxHeartRate() > 0) && ((int)lap->getMaxHeartRate() < FIT_HEARTRATE_INVALID)) {
+	if ((int)lap->getMaxHeartRate() != FIT_HEARTRATE_INVALID) {
 		ss.str("");
 		ss << (int)lap->getMaxHeartRate();
 		this->tcxLap->setMaximumHeartRateBpm(ss.str());
 	}
 
-	if ((lap->getMaxSpeed() > 0) && (lap->getMaxSpeed() != FIT_SPEED_INVALID)) {
+	if (lap->getMaxSpeed() != FIT_SPEED_INVALID) {
 		ss.str("");
 		ss << lap->getMaxSpeed();
 		this->tcxLap->setMaximumSpeed(ss.str());
 	}
 
-
-	if ((lap->getMaxPower() > 0) && (lap->getAvgPower() != FIT_POWER_INVALID)) {
+	if (lap->getAvgPower() != FIT_POWER_INVALID) {
 		ss.str("");
 		ss << lap->getMaxPower();
 		this->tcxLap->setMaxPower(ss.str());
 	}
 
-	if (lap->getTotalCalories() > 0) {
+	if (lap->getTotalCalories() != FIT_CALORIES_INVALID) {
 		ss.str("");
 		ss << lap->getTotalCalories();
 		this->tcxLap->setCalories(ss.str());
 	}
 
-	ss.str("");
-	ss << lap->getTotalTimerTime();
-	this->tcxLap->setTotalTimeSeconds(ss.str());
+	if (lap->getTotalTimerTime() != FIT_TOTALTIMERTIME_INVALID) {
+		ss.str("");
+		ss << lap->getTotalTimerTime();
+		this->tcxLap->setTotalTimeSeconds(ss.str());
+	}
 
 
 	switch (lap->getIntensity()) {
@@ -299,7 +311,7 @@ void Fit2TcxConverter::handle_Lap(FitMsg_Lap *lap) {
 			this->tcxLap->setCadenceSensorType(TrainingCenterDatabase::Footpod);
 			setTrackpointCadenceType(TrainingCenterDatabase::Footpod);
 
-		    if ((lap->getTotalCycles() > 0) && (lap->getTotalCycles() != FIT_CYCLES_INVALID)) {
+		    if (lap->getTotalCycles() != FIT_CYCLES_INVALID) {
 		        ss.str("");
 		        ss << (lap->getTotalCycles() * 2);
 		        this->tcxLap->setSteps(ss.str());

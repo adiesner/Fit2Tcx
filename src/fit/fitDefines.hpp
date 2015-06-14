@@ -42,7 +42,12 @@ enum FIT_SPORT {
 #define FIT_SPEED_INVALID                                                       ((float)0xFFFF/1000)
 #define FIT_HEARTRATE_INVALID                                                   (0xFF)
 #define FIT_CADENCE_INVALID                                                     (0xFF)
-#define FIT_POWER_INVALID                                                       (0xFFFF)
+#define FIT_POWER_INVALID                                                       ((unsigned short)0xFFFF)
+#define FIT_DATE_TIME_INVALID													((unsigned long)0xFFFFFFFF)
+#define FIT_ALTITUDE_INVALID													((float)0xFFFFFFFF)
+#define FIT_DISTANCE_INVALID													((float)0xFFFFFFFF)
+#define FIT_CALORIES_INVALID 													((unsigned short)0xFFFF)
+#define FIT_TOTALTIMERTIME_INVALID												((float)0xFFFFFFFF)
 
 enum FIT_LAP_INTENSITY {
 	INTENSITY_ACTIVE=0,

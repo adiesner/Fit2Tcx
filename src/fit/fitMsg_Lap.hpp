@@ -21,6 +21,8 @@
 #ifndef FITMSG_LAP_H
 #define FITMSG_LAP_H
 
+#include "fitDefines.hpp"
+
 #define FIT_MESSAGE_LAP                                         ((unsigned char)19)
 
 class FitMsg_Lap : public FitMsg
@@ -29,7 +31,7 @@ public:
 	FitMsg_Lap() : FitMsg(FIT_MESSAGE_LAP),
 	    //TODO: Check if other default values are better
                 messageIndex(0),
-                timestamp(0),
+                timestamp(FIT_DATE_TIME_INVALID),
                 event(0),
                 eventType(0),
                 startTime(0),
@@ -38,20 +40,20 @@ public:
                 endPositionLat(0),
                 endPositionLong(0),
                 totalElapsedTime(0),
-                totalTimerTime(0),
-                totalDistance(0),
-                totalCycles(0),
+                totalTimerTime(FIT_TOTALTIMERTIME_INVALID),
+                totalDistance(FIT_DISTANCE_INVALID),
+                totalCycles(FIT_CYCLES_INVALID),
                 totalStrides(0),
-                totalCalories(0),
+                totalCalories(FIT_CALORIES_INVALID),
                 totalFatCalories(0),
-                avgSpeed(0),
-                maxSpeed(0),
-                avgHeartRate(0),
-                maxHeartRate(0),
-                avgCadence(0),
-                maxCadence(0),
-                avgPower(0),
-                maxPower(0),
+                avgSpeed(FIT_SPEED_INVALID),
+                maxSpeed(FIT_SPEED_INVALID),
+                avgHeartRate(FIT_HEARTRATE_INVALID),
+                maxHeartRate(FIT_HEARTRATE_INVALID),
+                avgCadence(FIT_CADENCE_INVALID),
+                maxCadence(FIT_CADENCE_INVALID),
+                avgPower(FIT_POWER_INVALID),
+                maxPower(FIT_POWER_INVALID),
                 totalAscent(0),
                 totalDescent(0),
                 intensity(0),
